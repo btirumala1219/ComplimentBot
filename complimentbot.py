@@ -16,14 +16,14 @@ used = []
 def login_bot():
     print(creds)
     r = praw.Reddit(user_agent="ComplimentBot by Barath",
-                    client_id=creds[0],
-                    username=creds[1],
-                    password=creds[2],
-                    client_secret=creds[3])
+                    client_id="RLzYlFQNy9qKdw",
+                    username=creds[0],
+                    password=creds[1],
+                    client_secret="jSEhZZ0-HNf0ig9N6pi7pogk7GQ")
     return r
 
 def run_bot(r):
-    for comment in r.subreddit('test').comments(limit=25):
+    for comment in r.subreddit(creds[2]).comments(limit=25):
         if "!compliment" in comment.body:
             if comment.id not in used:
                 i = random.randint(0,25)
