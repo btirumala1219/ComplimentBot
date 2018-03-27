@@ -1,24 +1,34 @@
 import praw
 import time
 import requests
+import random
 
-requests.get("https://spreadsheets.google.com/feeds/list/1eEa2ra2yHBXVZ_ctH4J15tFSGEu-VTSunsrvaCAV598/od6/public/values?alt=json").json()['feed']['entry'][0]['title']['$t']
 strs = ["" for x in range(50)]
 for x in range(0,25):
     strs[x] = requests.get("https://spreadsheets.google.com/feeds/list/1eEa2ra2yHBXVZ_ctH4J15tFSGEu-VTSunsrvaCAV598/od6/public/values?alt=json").json()['feed']['entry'][x]['title']['$t']
     #print(strs[x])
 
-r = praw.Reddit(user_agent = "ComplimentBot by Barath",
-                client_id="ID",
-                username="ComplimentForAll",
-                password="Test1234",
-                client_secret="CLIENT_SECRET")
+f = open("credentials.txt","r")
+creds = f.read().splitlines()
 
+used = []
 
-def run_bot():
-    subreddit = r.subreddit("test")
-    comments = subreddit.comments(limit=25)
-    for comment in comments:
-        print(comment)
+def login_bot():
+    print(creds)
+    r = praw.Reddit(user_agent="ComplimentBot by Barath",
+                    client_id=creds[0],
+                    username=creds[1],
+                    password=creds[2],
+                    client_secret=creds[3])
+    return r
 
-run_bot()
+def run_bot(r):
+    for comment in r.subreddit('test').comments(limit=25):
+        if "!compliment" in comment.body:
+            if comment.id not in used:
+                i = random.randint(0,25)
+                comment.reply(strs[i])
+                used.append(comment.id)
+
+r = login_bot()
+run_bot(r)
